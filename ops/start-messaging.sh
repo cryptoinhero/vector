@@ -65,7 +65,7 @@ echo " - version=$version"
 ####################
 # Nats config
 
-nats_image="${project}_nats:$version";
+nats_image="${project}_nats:latest";
 bash "$root/ops/pull-images.sh" "$nats_image" > /dev/null
 
 jwt_private_key_secret="${project}_jwt_private_key"
@@ -94,7 +94,7 @@ auth_port="5040"
 
 if [[ "$production" == "true" ]]
 then
-  auth_image_name="${project}_auth:$version";
+  auth_image_name="connextproject/nats-auth:latest";
   bash "$root/ops/pull-images.sh" "$auth_image_name" > /dev/null
   auth_image="image: '$auth_image_name'"
 
@@ -138,7 +138,7 @@ fi
 docker_compose=$root/.${stack}.docker-compose.yml
 rm -f "$docker_compose"
 cat - > "$docker_compose" <<EOF
-version: '3.4'
+version: '3.8'
 
 secrets:
   $jwt_public_key_secret:
@@ -168,10 +168,10 @@ services:
 
   auth:
     $common
-    $auth_image
+    image: "connextproject/nats-auth"
     environment:
-      VECTOR_JWT_SIGNER_PUBLIC_KEY_FILE: '/run/secrets/$jwt_public_key_secret'
-      VECTOR_JWT_SIGNER_PRIVATE_KEY_FILE: '/run/secrets/$jwt_private_key_secret'
+      VECTOR_JWT_SIGNER_PUBLIC_KEY_PATH: '/run/secrets/$jwt_public_key_secret'
+      VECTOR_JWT_SIGNER_PRIVATE_KEY_PATH: '/run/secrets/$jwt_private_key_secret'
       VECTOR_NATS_URL: 'nats://nats:4222'
       VECTOR_ADMIN_TOKEN: '$admin_token'
       VECTOR_PORT: '$auth_port'
@@ -182,9 +182,9 @@ services:
 
   nats:
     $common
-    image: '$nats_image'
+    image: "connextproject/vector_nats"
     environment:
-      JWT_SIGNER_PUBLIC_KEY_FILE: '/run/secrets/$jwt_public_key_secret'
+      JWT_SIGNER_PUBLIC_KEY: '/run/secrets/$jwt_public_key_secret'
     secrets:
       - '$jwt_public_key_secret'
     ports:
