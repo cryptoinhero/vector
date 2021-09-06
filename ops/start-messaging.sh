@@ -113,7 +113,7 @@ fi
 ####################
 # Proxy config
 
-proxy_image="${project}_${stack}_proxy:$version";
+proxy_image="${project}_${stack}_proxy:latest";
 bash "$root/ops/pull-images.sh" "$proxy_image" > /dev/null
 
 if [[ -n "$domain_name" ]]
@@ -168,7 +168,7 @@ services:
 
   auth:
     $common
-    image: "connextproject/nats-auth"
+    image: "connextproject/nats-auth:latest"
     environment:
       VECTOR_JWT_SIGNER_PUBLIC_KEY_PATH: '/run/secrets/$jwt_public_key_secret'
       VECTOR_JWT_SIGNER_PRIVATE_KEY_PATH: '/run/secrets/$jwt_private_key_secret'
@@ -182,7 +182,7 @@ services:
 
   nats:
     $common
-    image: "connextproject/vector_nats"
+    image: "connextproject/vector_nats:latest"
     environment:
       JWT_SIGNER_PUBLIC_KEY: '/run/secrets/$jwt_public_key_secret'
     secrets:
