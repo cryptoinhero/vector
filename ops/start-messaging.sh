@@ -168,7 +168,7 @@ services:
 
   auth:
     $common
-    image: "connextproject/nats-auth:latest"
+    image: "connextproject/nats-auth"
     environment:
       VECTOR_JWT_SIGNER_PUBLIC_KEY_PATH: '/run/secrets/$jwt_public_key_secret'
       VECTOR_JWT_SIGNER_PRIVATE_KEY_PATH: '/run/secrets/$jwt_private_key_secret'
@@ -182,7 +182,7 @@ services:
 
   nats:
     $common
-    image: "connextproject/vector_nats:latest"
+    image: "connextproject/vector_nats"
     environment:
       JWT_SIGNER_PUBLIC_KEY: '/run/secrets/$jwt_public_key_secret'
     secrets:
